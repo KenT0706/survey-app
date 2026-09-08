@@ -12,8 +12,8 @@ class DatabaseSeeder extends Seeder
         // Creates one admin login so you don't have to use Tinker.
         // ⚠️ Change this password immediately after first login.
         User::firstOrCreate(
-            ['email' => 'admin@example.com'],
-            ['name' => 'Admin', 'password' => bcrypt('password')]
+            ['email' => 'yslserene@gmail.com'],
+            ['name' => 'Admin', 'password' => bcrypt('668866')]
         );
     }
 }

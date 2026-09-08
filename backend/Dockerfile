@@ -27,4 +27,5 @@ EXPOSE 80
 # container per deploy, so anything not in the repo (including symlinks) is gone.
 CMD php artisan storage:link --force \
     && php artisan migrate --force \
+    && php artisan db:seed --force \
     && apache2-foreground
