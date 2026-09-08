@@ -5,7 +5,7 @@ FROM php:8.2-apache
 # - gd: required for the PNG results export (ExportController::image)
 # - zip: required by maatwebsite/excel
 RUN apt-get update && apt-get install -y \
-    libpq-dev libpng-dev libzip-dev unzip git \
+    libpq-dev libpng-dev libjpeg-dev libzip-dev unzip git \
     && docker-php-ext-configure gd --with-jpeg \
     && docker-php-ext-install pdo_pgsql pgsql gd zip \
     && a2enmod rewrite
