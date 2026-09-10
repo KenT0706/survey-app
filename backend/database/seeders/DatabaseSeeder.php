@@ -15,5 +15,6 @@ class DatabaseSeeder extends Seeder
             ['email' => 'yslserene@gmail.com'],
             ['name' => 'Admin', 'password' => bcrypt('668866')]
         );
+        $this->call(MayshowaEngagementSurveySeeder::class);
     }
 }
