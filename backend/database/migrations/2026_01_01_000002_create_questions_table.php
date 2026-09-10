@@ -13,7 +13,7 @@ return new class extends Migration
             $table->foreignId('survey_id')->constrained()->cascadeOnDelete();
             // text/textarea = open-ended. single_choice/multiple_choice/rating = closed-ended.
             $table->enum('type', ['text', 'textarea', 'single_choice', 'multiple_choice', 'rating']);
-            $table->string('question_text');
+            $table->text('question_text'); // trilingual questions can exceed 255 chars
             $table->boolean('is_required')->default(true);
             $table->unsignedInteger('order')->default(0);
             $table->timestamps();

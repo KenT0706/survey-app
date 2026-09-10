@@ -4,13 +4,16 @@ namespace Database\Seeders;
 
 use App\Models\Survey;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Mayshowa Group of Companies — Employee Engagement Survey 2026 (trilingual).
  *
- * Guarded with firstOrCreate on the slug, so it's safe to run repeatedly
- * (e.g. it fires on every Render boot alongside the admin user seeder)
- * without ever creating duplicate copies of this survey.
+ * Safe to run repeatedly (it fires on every Render boot alongside the admin
+ * user seeder): a fully-seeded copy is left alone, a partial/stale copy left
+ * behind by an earlier failed run is deleted and rebuilt from scratch, and
+ * the whole build runs inside one transaction so a failure mid-way can never
+ * leave partial data again.
  */
 class MayshowaEngagementSurveySeeder extends Seeder
 {
@@ -27,19 +30,6 @@ class MayshowaEngagementSurveySeeder extends Seeder
     public function run(): void
     {
         $slug = 'mayshowa-employee-engagement-survey-2026';
-
-        if (Survey::where('slug', $slug)->exists()) {
-            return; // already seeded — don't create a duplicate on repeat runs
-        }
-
-        $survey = Survey::create([
-            'title' => 'Mayshowa Employee Engagement Survey 2026',
-            'description' => '"Working Together" — We Want to Hear From You. Your answers are '
-                . 'reported in groupings, not individually. There are no right or wrong answers. '
-                . 'It takes about 10 minutes. Please submit by 15 September 2026.',
-            'slug' => $slug,
-            'is_active' => true,
-        ]);
 
         $questions = [
             // ---------- PART 1: ABOUT YOU ----------
@@ -120,17 +110,40 @@ class MayshowaEngagementSurveySeeder extends Seeder
             ['type' => 'textarea', 'question_text' => 'Any other comments or suggestions for Management? / Sebarang komen atau cadangan lain untuk Pihak Pengurusan? / 对管理层还有其他意见或建议吗？', 'required' => false],
         ];
 
-        foreach ($questions as $i => $q) {
-            $question = $survey->questions()->create([
-                'type' => $q['type'],
-                'question_text' => $q['question_text'],
-                'is_required' => $q['required'] ?? true,
-                'order' => $i,
+        $existing = Survey::where('slug', $slug)->withCount('questions')->first();
+
+        if ($existing && $existing->questions_count === count($questions)) {
+            return; // already fully seeded — nothing to do
+        }
+
+        DB::transaction(function () use ($slug, $questions, $existing) {
+            if ($existing) {
+                // Partial/stale copy from an earlier interrupted run — cascade
+                // delete removes its questions/options too, then rebuild clean.
+                $existing->delete();
+            }
+
+            $survey = Survey::create([
+                'title' => 'Mayshowa Employee Engagement Survey 2026',
+                'description' => '"Working Together" — We Want to Hear From You. Your answers are '
+                    . 'reported in groupings, not individually. There are no right or wrong answers. '
+                    . 'It takes about 10 minutes. Please submit by 15 September 2026.',
+                'slug' => $slug,
+                'is_active' => true,
             ]);
 
-            foreach ($q['options'] ?? [] as $j => $optionText) {
-                $question->options()->create(['option_text' => $optionText, 'order' => $j]);
+            foreach ($questions as $i => $q) {
+                $question = $survey->questions()->create([
+                    'type' => $q['type'],
+                    'question_text' => $q['question_text'],
+                    'is_required' => $q['required'] ?? true,
+                    'order' => $i,
+                ]);
+
+                foreach ($q['options'] ?? [] as $j => $optionText) {
+                    $question->options()->create(['option_text' => $optionText, 'order' => $j]);
+                }
             }
-        }
+        });
     }
 }
