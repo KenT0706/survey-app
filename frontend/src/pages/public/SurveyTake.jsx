@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { accentFor } from '../../lib/theme.js';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
 export default function SurveyTake() {
   const { slug } = useParams();
   const [survey, setSurvey] = useState(null);
-  const [answers, setAnswers] = useState({}); // { [questionId]: { answer_text } or { selected_option_ids } }
+  const [answers, setAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -22,12 +24,9 @@ export default function SurveyTake() {
   const toggleOption = (qid, optId, multiple) => {
     setAnswers((a) => {
       const current = a[qid]?.selected_option_ids || [];
-      let next;
-      if (multiple) {
-        next = current.includes(optId) ? current.filter((x) => x !== optId) : [...current, optId];
-      } else {
-        next = [optId];
-      }
+      const next = multiple
+        ? (current.includes(optId) ? current.filter((x) => x !== optId) : [...current, optId])
+        : [optId];
       return { ...a, [qid]: { question_id: qid, selected_option_ids: next } };
     });
   };
@@ -35,73 +34,124 @@ export default function SurveyTake() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setSubmitting(true);
     try {
-      await axios.post(`${API_URL}/public/surveys/${slug}/responses`, {
-        answers: Object.values(answers),
-      });
+      await axios.post(`${API_URL}/public/surveys/${slug}/responses`, { answers: Object.values(answers) });
       setSubmitted(true);
     } catch (err) {
       setError(err.response?.data?.message || 'Something went wrong submitting your response.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  if (error && !survey) return <p style={{ textAlign: 'center', marginTop: 60 }}>{error}</p>;
-  if (!survey) return <p style={{ textAlign: 'center', marginTop: 60 }}>Loading survey...</p>;
-  if (submitted) return <p style={{ textAlign: 'center', marginTop: 60 }}>✅ Thanks — your response was recorded!</p>;
+  const accent = survey ? accentFor(survey.id) : accentFor(0);
+
+  if (error && !survey) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--paper)' }}>
+        <p className="muted">{error}</p>
+      </div>
+    );
+  }
+
+  if (!survey) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--paper)' }}>
+        <p className="muted">Loading survey…</p>
+      </div>
+    );
+  }
+
+  if (submitted) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--paper)', padding: 20 }}>
+        <div className="card card-pad" style={{ maxWidth: 420, textAlign: 'center' }}>
+          <div style={{
+            width: 52, height: 52, borderRadius: '50%', background: accent.soft, color: accent.text,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', fontSize: 24,
+          }}>
+            ✓
+          </div>
+          <h2>Response recorded</h2>
+          <p className="muted">Thanks for taking the time to complete this survey.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div style={{ maxWidth: 560, margin: '40px auto', fontFamily: 'sans-serif', padding: '0 16px' }}>
-      <h2>{survey.title}</h2>
-      {survey.description && <p style={{ color: '#666' }}>{survey.description}</p>}
+    <div style={{ minHeight: '100vh', background: 'var(--paper)', paddingBottom: 60 }}>
+      <div style={{ background: accent.solid, padding: '48px 20px 64px' }}>
+        <div style={{ maxWidth: 640, margin: '0 auto', color: '#fff' }}>
+          <h1 style={{ color: '#fff', marginBottom: 8 }}>{survey.title}</h1>
+          {survey.description && <p style={{ opacity: 0.92, margin: 0 }}>{survey.description}</p>}
+        </div>
+      </div>
 
-      <form onSubmit={handleSubmit}>
-        {survey.questions.map((q) => (
-          <div key={q.id} style={{ marginBottom: 20 }}>
-            <label style={{ fontWeight: 600 }}>
-              {q.question_text} {q.is_required && <span style={{ color: 'crimson' }}>*</span>}
-            </label>
+      <div style={{ maxWidth: 640, margin: '-40px auto 0', padding: '0 20px' }}>
+        <form onSubmit={handleSubmit}>
+          {survey.questions.map((q, i) => (
+            <div key={q.id} className="card card-pad" style={{ marginBottom: 16 }}>
+              <label style={{ display: 'block', fontWeight: 700, marginBottom: 14, fontSize: 15.5 }}>
+                {i + 1}. {q.question_text} {q.is_required && <span className="field-required">*</span>}
+              </label>
 
-            {(q.type === 'text') && (
-              <input
-                required={q.is_required} type="text" onChange={(e) => setText(q.id, e.target.value)}
-                style={{ width: '100%', padding: 8, marginTop: 6 }}
-              />
-            )}
-            {q.type === 'textarea' && (
-              <textarea
-                required={q.is_required} rows={4} onChange={(e) => setText(q.id, e.target.value)}
-                style={{ width: '100%', padding: 8, marginTop: 6 }}
-              />
-            )}
-            {(q.type === 'single_choice' || q.type === 'rating') && (
-              <div style={{ marginTop: 6 }}>
-                {q.options.map((o) => (
-                  <label key={o.id} style={{ display: 'block', marginBottom: 4 }}>
-                    <input
-                      type="radio" name={`q-${q.id}`} required={q.is_required}
-                      onChange={() => toggleOption(q.id, o.id, false)}
-                    /> {o.option_text}
-                  </label>
-                ))}
-              </div>
-            )}
-            {q.type === 'multiple_choice' && (
-              <div style={{ marginTop: 6 }}>
-                {q.options.map((o) => (
-                  <label key={o.id} style={{ display: 'block', marginBottom: 4 }}>
-                    <input type="checkbox" onChange={() => toggleOption(q.id, o.id, true)} /> {o.option_text}
-                  </label>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
+              {q.type === 'text' && (
+                <input
+                  required={q.is_required} type="text" className="field"
+                  onChange={(e) => setText(q.id, e.target.value)}
+                />
+              )}
+              {q.type === 'textarea' && (
+                <textarea
+                  required={q.is_required} rows={4} className="field"
+                  onChange={(e) => setText(q.id, e.target.value)}
+                  style={{ fontFamily: 'Inter, sans-serif', resize: 'vertical' }}
+                />
+              )}
+              {(q.type === 'single_choice' || q.type === 'rating') && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {q.options.map((o) => (
+                    <label
+                      key={o.id}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px',
+                        border: '1.5px solid var(--line)', borderRadius: 'var(--radius-md)', cursor: 'pointer',
+                      }}
+                    >
+                      <input type="radio" name={`q-${q.id}`} required={q.is_required} onChange={() => toggleOption(q.id, o.id, false)} />
+                      {o.option_text}
+                    </label>
+                  ))}
+                </div>
+              )}
+              {q.type === 'multiple_choice' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {q.options.map((o) => (
+                    <label
+                      key={o.id}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px',
+                        border: '1.5px solid var(--line)', borderRadius: 'var(--radius-md)', cursor: 'pointer',
+                      }}
+                    >
+                      <input type="checkbox" onChange={() => toggleOption(q.id, o.id, true)} />
+                      {o.option_text}
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
 
-        {error && <p style={{ color: 'crimson' }}>{error}</p>}
-        <button type="submit" style={{ padding: '10px 20px', background: '#0f766e', color: '#fff', border: 'none', borderRadius: 6 }}>
-          Submit
-        </button>
-      </form>
+          {error && <p style={{ color: 'var(--danger)', fontSize: 13.5, marginBottom: 12 }}>{error}</p>}
+
+          <button type="submit" className="btn btn-pop btn-block" disabled={submitting} style={{ padding: '13px' }}>
+            {submitting ? 'Submitting…' : 'Submit response'}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

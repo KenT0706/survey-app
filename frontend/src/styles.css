@@ -1,0 +1,190 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --ink: #16162A;
+  --ink-soft: #565875;
+  --paper: #F5F6FB;
+  --white: #FFFFFF;
+  --line: #E4E5F1;
+  --brand: #4F46E5;
+  --brand-dark: #3730A3;
+  --brand-soft: #EEF0FF;
+  --pop: #FF6B4A;
+  --pop-dark: #C2410C;
+  --danger: #E11D48;
+  --radius-lg: 16px;
+  --radius-md: 10px;
+  --radius-sm: 7px;
+  --shadow-card: 0 1px 2px rgba(22,22,42,0.04), 0 6px 20px rgba(22,22,42,0.06);
+  --shadow-pop: 0 8px 24px rgba(79,70,229,0.18);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Sora', 'Inter', sans-serif;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 4px;
+  color: var(--ink);
+}
+
+a { color: var(--brand); }
+
+/* ---------- layout shells ---------- */
+
+.page {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+.page--narrow { max-width: 520px; }
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 32px;
+  background: var(--white);
+  border-bottom: 1px solid var(--line);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.brand-mark {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--brand), var(--pop));
+  flex-shrink: 0;
+}
+
+/* ---------- cards & surfaces ---------- */
+
+.card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.card-pad { padding: 24px; }
+
+.cover-band {
+  height: 8px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+/* ---------- buttons & inputs ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 20px;
+  border-radius: var(--radius-md);
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.08s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.btn:active { transform: translateY(1px); }
+
+.btn-primary {
+  background: var(--brand);
+  color: var(--white);
+  box-shadow: var(--shadow-pop);
+}
+.btn-primary:hover { background: var(--brand-dark); }
+
+.btn-pop {
+  background: var(--pop);
+  color: var(--white);
+}
+.btn-pop:hover { background: var(--pop-dark); }
+
+.btn-ghost {
+  background: var(--white);
+  color: var(--ink);
+  border: 1px solid var(--line);
+}
+.btn-ghost:hover { border-color: var(--brand); color: var(--brand); }
+
+.btn-sm { padding: 7px 14px; font-size: 13px; }
+.btn-block { width: 100%; }
+
+.field {
+  width: 100%;
+  padding: 11px 14px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--line);
+  font-family: 'Inter', sans-serif;
+  font-size: 14.5px;
+  color: var(--ink);
+  background: var(--white);
+  transition: border-color 0.12s ease;
+}
+.field:focus {
+  outline: none;
+  border-color: var(--brand);
+}
+.field-label {
+  display: block;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: var(--ink);
+}
+.field-required { color: var(--pop); margin-left: 3px; }
+
+/* ---------- pills / badges ---------- */
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 11px;
+  border-radius: 100px;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.stat {
+  color: var(--ink-soft);
+  font-size: 13.5px;
+}
+.stat b { color: var(--ink); font-weight: 600; }
+
+/* ---------- misc ---------- */
+
+.muted { color: var(--ink-soft); }
+.spacer-16 { height: 16px; }
+.spacer-24 { height: 24px; }
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--ink-soft);
+}
