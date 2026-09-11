@@ -127,7 +127,7 @@ class MayshowaEngagementSurveySeeder extends Seeder
                 'title' => 'Mayshowa Employee Engagement Survey 2026',
                 'description' => '"Working Together" — We Want to Hear From You. Your answers are '
                     . 'reported in groupings, not individually. There are no right or wrong answers. '
-                    . 'It takes about 10 minutes. Please submit by 15 September 2026.',
+                    . 'It takes about 10 minutes. Please submit by 30th September 2026.',
                 'slug' => $slug,
                 'is_active' => true,
             ]);
