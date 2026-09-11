@@ -52,7 +52,7 @@ export default function SurveyBuilder() {
 
   if (!survey) return <div className="page"><p className="muted">Loading…</p></div>;
 
-  const accent = accentFor(survey.id);
+  const accent = accentFor(survey);
 
   return (
     <>

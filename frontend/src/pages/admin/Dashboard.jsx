@@ -45,7 +45,7 @@ export default function Dashboard() {
 
         <form onSubmit={createSurvey} className="card card-pad" style={{ display: 'flex', gap: 10, marginBottom: 32 }}>
           <input
-            className="field" placeholder="Name your new survey — e.g. &quot;Team Engagement Q3&quot;"
+           className="field" placeholder='Name your new survey — e.g. "Team Engagement Q3"'
             value={title} onChange={(e) => setTitle(e.target.value)}
           />
           <button type="submit" className="btn btn-primary" disabled={creating} style={{ flexShrink: 0 }}>
@@ -64,7 +64,7 @@ export default function Dashboard() {
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 18 }}>
           {surveys?.map((s) => {
-            const accent = accentFor(s.id);
+            const accent = accentFor(s);
             return (
               <div key={s.id} className="card" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                 <div className="cover-band" style={{ background: accent.solid }} />

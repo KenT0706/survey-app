@@ -27,7 +27,7 @@ export default function SurveyResponses() {
 
   if (!survey) return <div className="page"><p className="muted">Loading…</p></div>;
 
-  const accent = accentFor(survey.id);
+  const accent = accentFor(survey);
   const slug = survey.slug || survey.id;
 
   return (

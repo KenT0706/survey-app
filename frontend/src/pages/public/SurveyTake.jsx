@@ -45,7 +45,7 @@ export default function SurveyTake() {
     }
   };
 
-  const accent = survey ? accentFor(survey.id) : accentFor(0);
+  const accent = survey ? accentFor(survey) : accentFor(0);
 
   if (error && !survey) {
     return (
@@ -93,7 +93,7 @@ export default function SurveyTake() {
         <form onSubmit={handleSubmit}>
           {survey.questions.map((q, i) => (
             <div key={q.id} className="card card-pad" style={{ marginBottom: 16 }}>
-              <label style={{ display: 'block', fontWeight: 700, marginBottom: 14, fontSize: 15.5 }}>
+              <label style={{ display: 'block', fontWeight: 700, marginBottom: 14, fontSize: 14 }}>
                 {i + 1}. {q.question_text} {q.is_required && <span className="field-required">*</span>}
               </label>
 
@@ -101,13 +101,14 @@ export default function SurveyTake() {
                 <input
                   required={q.is_required} type="text" className="field"
                   onChange={(e) => setText(q.id, e.target.value)}
+                  style={{ fontSize: 16.5 }}
                 />
               )}
               {q.type === 'textarea' && (
                 <textarea
                   required={q.is_required} rows={4} className="field"
                   onChange={(e) => setText(q.id, e.target.value)}
-                  style={{ fontFamily: 'Inter, sans-serif', resize: 'vertical' }}
+                  style={{ fontFamily: 'Inter, sans-serif', resize: 'vertical', fontSize: 16.5 }}
                 />
               )}
               {(q.type === 'single_choice' || q.type === 'rating') && (
@@ -118,6 +119,7 @@ export default function SurveyTake() {
                       style={{
                         display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px',
                         border: '1.5px solid var(--line)', borderRadius: 'var(--radius-md)', cursor: 'pointer',
+                        fontSize: 16.5,
                       }}
                     >
                       <input type="radio" name={`q-${q.id}`} required={q.is_required} onChange={() => toggleOption(q.id, o.id, false)} />
@@ -134,6 +136,7 @@ export default function SurveyTake() {
                       style={{
                         display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px',
                         border: '1.5px solid var(--line)', borderRadius: 'var(--radius-md)', cursor: 'pointer',
+                        fontSize: 16.5,
                       }}
                     >
                       <input type="checkbox" onChange={() => toggleOption(q.id, o.id, true)} />

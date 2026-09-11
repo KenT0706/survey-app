@@ -10,7 +10,25 @@ const ACCENTS = [
   { name: 'violet', solid: '#7C3AED', soft: '#F4EEFF', text: '#6D28D9' },
 ];
 
-export function accentFor(id) {
-  const n = typeof id === 'number' ? id : parseInt(id, 10) || 0;
+// Sampled directly from the Mayshowa logo — navy from the wordmark, teal from
+// the "Working Together" script. Swap MAYSHOWA_BRAND's solid/soft/text to the
+// teal set below if you'd rather use that one instead.
+const MAYSHOWA_BRAND = { name: 'mayshowa-navy', solid: '#1E3C64', soft: '#E7ECF3', text: '#1E3C64' };
+// const MAYSHOWA_BRAND = { name: 'mayshowa-teal', solid: '#2F8B90', soft: '#E7F4F4', text: '#1F6367' };
+
+const BRAND_OVERRIDES = {
+  'mayshowa-employee-engagement-survey-2026': MAYSHOWA_BRAND,
+};
+
+// Pass either just an id (rotates through the palette as before), or a full
+// survey object (checked against BRAND_OVERRIDES by slug first).
+export function accentFor(idOrSurvey) {
+  if (idOrSurvey && typeof idOrSurvey === 'object') {
+    if (idOrSurvey.slug && BRAND_OVERRIDES[idOrSurvey.slug]) {
+      return BRAND_OVERRIDES[idOrSurvey.slug];
+    }
+    return accentFor(idOrSurvey.id);
+  }
+  const n = typeof idOrSurvey === 'number' ? idOrSurvey : parseInt(idOrSurvey, 10) || 0;
   return ACCENTS[n % ACCENTS.length];
 }
