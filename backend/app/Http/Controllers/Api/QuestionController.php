@@ -15,6 +15,7 @@ class QuestionController extends Controller
     {
         $data = $request->validate([
             'type' => 'required|in:text,textarea,single_choice,multiple_choice,rating',
+            'section' => 'nullable|string|max:255',
             'question_text' => 'required|string|max:1000',
             'is_required' => 'boolean',
             'order' => 'nullable|integer',
@@ -26,6 +27,7 @@ class QuestionController extends Controller
         $question = DB::transaction(function () use ($survey, $data) {
             $question = $survey->questions()->create([
                 'type' => $data['type'],
+                'section' => $data['section'] ?? null,
                 'question_text' => $data['question_text'],
                 'is_required' => $data['is_required'] ?? true,
                 'order' => $data['order'] ?? ($survey->questions()->max('order') + 1),
@@ -48,6 +50,7 @@ class QuestionController extends Controller
     {
         $data = $request->validate([
             'question_text' => 'sometimes|required|string|max:1000',
+            'section' => 'nullable|string|max:255',
             'is_required' => 'boolean',
             'order' => 'nullable|integer',
             'options' => 'nullable|array',

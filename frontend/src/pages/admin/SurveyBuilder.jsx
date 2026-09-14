@@ -16,6 +16,7 @@ export default function SurveyBuilder() {
   const { id } = useParams();
   const [survey, setSurvey] = useState(null);
   const [type, setType] = useState('text');
+  const [section, setSection] = useState('');
   const [questionText, setQuestionText] = useState('');
   const [optionsText, setOptionsText] = useState('');
 
@@ -28,7 +29,12 @@ export default function SurveyBuilder() {
     e.preventDefault();
     if (!questionText.trim()) return;
 
-    const payload = { type, question_text: questionText, is_required: true };
+    const payload = {
+      type,
+      question_text: questionText,
+      section: section.trim() || null,
+      is_required: true,
+    };
     if (isClosed) {
       payload.options = optionsText.split('\n').map((s) => s.trim()).filter(Boolean);
       if (payload.options.length < 2) {
@@ -75,44 +81,58 @@ export default function SurveyBuilder() {
             {survey.questions.length > 0 && (
               <div className="card card-pad" style={{ marginBottom: 20 }}>
                 <h3 style={{ marginBottom: 16 }}>Questions</h3>
-                {survey.questions.map((q, i) => (
-                  <div
-                    key={q.id}
-                    style={{
-                      display: 'flex', gap: 14, padding: '14px 0',
-                      borderTop: i > 0 ? '1px solid var(--line)' : 'none',
-                    }}
-                  >
-                    <div style={{
-                      width: 26, height: 26, borderRadius: '50%', background: accent.soft, color: accent.text,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: 12.5, fontWeight: 700, flexShrink: 0,
-                    }}>
-                      {i + 1}
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <p style={{ margin: 0, fontWeight: 600 }}>{q.question_text}</p>
-                      <p className="stat" style={{ marginTop: 2 }}>
-                        {QUESTION_TYPES.find((t) => t.value === q.type)?.label}
-                      </p>
-                      {q.options?.length > 0 && q.type !== 'rating' && (
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 8 }}>
-                          {q.options.map((o) => (
-                            <span key={o.id} className="pill" style={{ background: 'var(--paper)', color: 'var(--ink-soft)' }}>
-                              {o.option_text}
-                            </span>
-                          ))}
-                        </div>
+                {survey.questions.map((q, i) => {
+                  const prevSection = i > 0 ? survey.questions[i - 1].section : null;
+                  const showSectionHeading = q.section && q.section !== prevSection;
+
+                  return (
+                    <div key={q.id}>
+                      {showSectionHeading && (
+                        <p style={{
+                          fontSize: 12.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.4,
+                          color: accent.text, margin: i === 0 ? '0 0 8px' : '20px 0 8px',
+                        }}>
+                          {q.section}
+                        </p>
                       )}
+                      <div
+                        style={{
+                          display: 'flex', gap: 14, padding: '14px 0',
+                          borderTop: (i > 0 && !showSectionHeading) ? '1px solid var(--line)' : 'none',
+                        }}
+                      >
+                        <div style={{
+                          width: 26, height: 26, borderRadius: '50%', background: accent.soft, color: accent.text,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontSize: 12.5, fontWeight: 700, flexShrink: 0,
+                        }}>
+                          {i + 1}
+                        </div>
+                        <div style={{ flex: 1 }}>
+                          <p style={{ margin: 0, fontWeight: 600 }}>{q.question_text}</p>
+                          <p className="stat" style={{ marginTop: 2 }}>
+                            {QUESTION_TYPES.find((t) => t.value === q.type)?.label}
+                          </p>
+                          {q.options?.length > 0 && q.type !== 'rating' && (
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 8 }}>
+                              {q.options.map((o) => (
+                                <span key={o.id} className="pill" style={{ background: 'var(--paper)', color: 'var(--ink-soft)' }}>
+                                  {o.option_text}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                        <button
+                          onClick={() => removeQuestion(q.id)}
+                          style={{ background: 'none', border: 'none', color: 'var(--ink-soft)', cursor: 'pointer', fontSize: 13, height: 'fit-content' }}
+                        >
+                          Remove
+                        </button>
+                      </div>
                     </div>
-                    <button
-                      onClick={() => removeQuestion(q.id)}
-                      style={{ background: 'none', border: 'none', color: 'var(--ink-soft)', cursor: 'pointer', fontSize: 13, height: 'fit-content' }}
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
 
@@ -137,6 +157,14 @@ export default function SurveyBuilder() {
                   </button>
                 ))}
               </div>
+
+              <label className="field-label">Section (optional)</label>
+              <input
+                className="field" value={section}
+                onChange={(e) => setSection(e.target.value)}
+                placeholder='e.g. "Part 1 — About You" — groups questions under a shared heading'
+                style={{ marginBottom: 16 }}
+              />
 
               <label className="field-label">Question</label>
               <input

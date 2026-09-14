@@ -12,7 +12,7 @@ class Question extends Model
     public const OPEN_TYPES = ['text', 'textarea'];
     public const CLOSED_TYPES = ['single_choice', 'multiple_choice', 'rating'];
 
-    protected $fillable = ['survey_id', 'type', 'question_text', 'is_required', 'order'];
+    protected $fillable = ['survey_id', 'type', 'section', 'question_text', 'is_required', 'order'];
 
     protected $casts = [
         'is_required' => 'boolean',

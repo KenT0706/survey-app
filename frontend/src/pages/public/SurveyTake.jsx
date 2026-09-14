@@ -85,68 +85,84 @@ export default function SurveyTake() {
       <div style={{ background: accent.solid, padding: '48px 20px 64px' }}>
         <div style={{ maxWidth: 640, margin: '0 auto', color: '#fff' }}>
           <h1 style={{ color: '#fff', marginBottom: 8 }}>{survey.title}</h1>
-          {survey.description && <p style={{ opacity: 0.92, margin: 0 }}>{survey.description}</p>}
+          {survey.description && <p style={{ opacity: 0.92, margin: 0, whiteSpace: 'pre-line' }}>{survey.description}</p>}
         </div>
       </div>
 
       <div style={{ maxWidth: 640, margin: '-40px auto 0', padding: '0 20px' }}>
         <form onSubmit={handleSubmit}>
-          {survey.questions.map((q, i) => (
-            <div key={q.id} className="card card-pad" style={{ marginBottom: 16 }}>
-              <label style={{ display: 'block', fontWeight: 700, marginBottom: 14, fontSize: 14 }}>
-                {i + 1}. {q.question_text} {q.is_required && <span className="field-required">*</span>}
-              </label>
+          {survey.questions.map((q, i) => {
+            const prevSection = i > 0 ? survey.questions[i - 1].section : null;
+            const showSectionHeading = q.section && q.section !== prevSection;
 
-              {q.type === 'text' && (
-                <input
-                  required={q.is_required} type="text" className="field"
-                  onChange={(e) => setText(q.id, e.target.value)}
-                  style={{ fontSize: 16.5 }}
-                />
-              )}
-              {q.type === 'textarea' && (
-                <textarea
-                  required={q.is_required} rows={4} className="field"
-                  onChange={(e) => setText(q.id, e.target.value)}
-                  style={{ fontFamily: 'Inter, sans-serif', resize: 'vertical', fontSize: 16.5 }}
-                />
-              )}
-              {(q.type === 'single_choice' || q.type === 'rating') && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {q.options.map((o) => (
-                    <label
-                      key={o.id}
-                      style={{
-                        display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px',
-                        border: '1.5px solid var(--line)', borderRadius: 'var(--radius-md)', cursor: 'pointer',
-                        fontSize: 16.5,
-                      }}
-                    >
-                      <input type="radio" name={`q-${q.id}`} required={q.is_required} onChange={() => toggleOption(q.id, o.id, false)} />
-                      {o.option_text}
-                    </label>
-                  ))}
+            return (
+              <div key={q.id}>
+                {showSectionHeading && (
+                  <div style={{
+                    marginTop: i === 0 ? 0 : 28, marginBottom: 12,
+                    paddingBottom: 8, borderBottom: `2px solid ${accent.solid}`,
+                  }}>
+                    <h3 style={{ color: accent.text, margin: 0 }}>{q.section}</h3>
+                  </div>
+                )}
+
+                <div className="card card-pad" style={{ marginBottom: 16 }}>
+                  <label style={{ display: 'block', fontWeight: 700, marginBottom: 14, fontSize: 14 }}>
+                    {i + 1}. {q.question_text} {q.is_required && <span className="field-required">*</span>}
+                  </label>
+
+                  {q.type === 'text' && (
+                    <input
+                      required={q.is_required} type="text" className="field"
+                      onChange={(e) => setText(q.id, e.target.value)}
+                      style={{ fontSize: 16.5 }}
+                    />
+                  )}
+                  {q.type === 'textarea' && (
+                    <textarea
+                      required={q.is_required} rows={4} className="field"
+                      onChange={(e) => setText(q.id, e.target.value)}
+                      style={{ fontFamily: 'Inter, sans-serif', resize: 'vertical', fontSize: 16.5 }}
+                    />
+                  )}
+                  {(q.type === 'single_choice' || q.type === 'rating') && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      {q.options.map((o) => (
+                        <label
+                          key={o.id}
+                          style={{
+                            display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px',
+                            border: '1.5px solid var(--line)', borderRadius: 'var(--radius-md)', cursor: 'pointer',
+                            fontSize: 16.5,
+                          }}
+                        >
+                          <input type="radio" name={`q-${q.id}`} required={q.is_required} onChange={() => toggleOption(q.id, o.id, false)} />
+                          {o.option_text}
+                        </label>
+                      ))}
+                    </div>
+                  )}
+                  {q.type === 'multiple_choice' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      {q.options.map((o) => (
+                        <label
+                          key={o.id}
+                          style={{
+                            display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px',
+                            border: '1.5px solid var(--line)', borderRadius: 'var(--radius-md)', cursor: 'pointer',
+                            fontSize: 16.5,
+                          }}
+                        >
+                          <input type="checkbox" onChange={() => toggleOption(q.id, o.id, true)} />
+                          {o.option_text}
+                        </label>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              )}
-              {q.type === 'multiple_choice' && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {q.options.map((o) => (
-                    <label
-                      key={o.id}
-                      style={{
-                        display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px',
-                        border: '1.5px solid var(--line)', borderRadius: 'var(--radius-md)', cursor: 'pointer',
-                        fontSize: 16.5,
-                      }}
-                    >
-                      <input type="checkbox" onChange={() => toggleOption(q.id, o.id, true)} />
-                      {o.option_text}
-                    </label>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
+              </div>
+            );
+          })}
 
           {error && <p style={{ color: 'var(--danger)', fontSize: 13.5, marginBottom: 12 }}>{error}</p>}
 

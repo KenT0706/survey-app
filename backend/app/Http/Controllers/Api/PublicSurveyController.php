@@ -28,7 +28,7 @@ class PublicSurveyController extends Controller
         return response()->json(
             $survey->only(['id', 'title', 'description', 'slug'])
             + ['questions' => $survey->questions()->with('options:id,question_id,option_text,order')->get()
-                ->map(fn ($q) => $q->only(['id', 'type', 'question_text', 'is_required', 'order', 'options']))]
+                ->map(fn ($q) => $q->only(['id', 'type', 'section', 'question_text', 'is_required', 'order', 'options']))]
         );
     }
 
