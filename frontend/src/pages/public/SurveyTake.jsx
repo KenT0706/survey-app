@@ -81,10 +81,9 @@ export default function SurveyTake() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--paper)', paddingBottom: 60 }}>
+    <div style={{ minHeight: '100vh', background: 'var(--paper)', paddingBottom: 60,'--accent': accent.solid,}}>
       <div style={{ background: accent.solid, padding: '48px 20px 64px' }}>
         <div style={{ maxWidth: 640, margin: '0 auto', color: '#fff' }}>
-          <h1 style={{ color: '#fff', marginBottom: 8 }}>{survey.title}</h1>
           {survey.description && <p style={{ opacity: 0.92, margin: 0, whiteSpace: 'pre-line' }}>{survey.description}</p>}
         </div>
       </div>
@@ -175,9 +174,18 @@ export default function SurveyTake() {
             </p>
           )}
 
-          <button type="submit" className="btn btn-pop btn-block" disabled={submitting} style={{ padding: '13px' }}>
-            {submitting ? 'Submitting…' : 'Submit response'}
-          </button>
+        <button
+      type="submit"
+      className="btn btn-pop btn-block"
+      disabled={submitting}
+      style={{
+        padding: '13px',
+        backgroundColor: accent.solid,
+        borderColor: accent.solid,
+      }}
+    >
+      {submitting ? 'Submitting…' : 'Submit response'}
+    </button>
         </form>
       </div>
     </div>

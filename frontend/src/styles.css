@@ -121,8 +121,8 @@ a { color: var(--brand); }
 .btn-primary:hover { background: var(--brand-dark); }
 
 .btn-pop {
-  background: var(--pop);
-  color: var(--white);
+  background-color: var(--accent, #FF6B4A);
+  border-color: var(--accent, #FF6B4A);
 }
 .btn-pop:hover { background: var(--pop-dark); }
 

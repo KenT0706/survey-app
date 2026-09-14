@@ -30,7 +30,7 @@ export default function Login() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: 'linear-gradient(160deg, #4F46E5 0%, #6D28D9 45%, #1E3C64 100%)',
+      background: 'linear-gradient(160deg, #4F46E5 0%, #6D28D9 45%, #FF6B4A 100%)',
       padding: 20,
     }}>
       <div className="card card-pad" style={{ width: 380 }}>
