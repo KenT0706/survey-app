@@ -26,7 +26,7 @@ class PublicSurveyController extends Controller
 
         // Don't leak internal option IDs' relation to answers; just id + text is fine for rendering.
         return response()->json(
-            $survey->only(['id', 'title', 'description', 'slug'])
+            $survey->only(['id', 'title', 'description', 'closing_note', 'slug'])
             + ['questions' => $survey->questions()->with('options:id,question_id,option_text,order')->get()
                 ->map(fn ($q) => $q->only(['id', 'type', 'section', 'question_text', 'is_required', 'order', 'options']))]
         );

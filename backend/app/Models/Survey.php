@@ -11,7 +11,7 @@ class Survey extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title', 'description', 'slug', 'qr_code_path',
+        'title', 'description', 'closing_note', 'slug', 'qr_code_path',
         'is_active', 'opens_at', 'closes_at', 'created_by', 'seed_hash',
     ];
 

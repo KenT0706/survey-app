@@ -102,7 +102,7 @@ export default function SurveyTake() {
                     marginTop: i === 0 ? 0 : 28, marginBottom: 12,
                     paddingBottom: 8, borderBottom: `2px solid ${accent.solid}`,
                   }}>
-                    <h3 style={{ color: accent.text, margin: 0 }}>{q.section}</h3>
+                    <h3 style={{ color: accent.text, margin: 0, whiteSpace: 'pre-line' }}>{q.section}</h3>
                   </div>
                 )}
 
@@ -165,6 +165,15 @@ export default function SurveyTake() {
           })}
 
           {error && <p style={{ color: 'var(--danger)', fontSize: 13.5, marginBottom: 12 }}>{error}</p>}
+
+          {survey.closing_note && (
+            <p style={{
+              textAlign: 'center', fontStyle: 'italic', color: 'var(--ink-soft)',
+              whiteSpace: 'pre-line', marginBottom: 20,
+            }}>
+              {survey.closing_note}
+            </p>
+          )}
 
           <button type="submit" className="btn btn-pop btn-block" disabled={submitting} style={{ padding: '13px' }}>
             {submitting ? 'Submitting…' : 'Submit response'}

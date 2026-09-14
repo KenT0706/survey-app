@@ -89,8 +89,9 @@ export default function SurveyBuilder() {
                     <div key={q.id}>
                       {showSectionHeading && (
                         <p style={{
-                          fontSize: 12.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.4,
-                          color: accent.text, margin: i === 0 ? '0 0 8px' : '20px 0 8px',
+                          fontSize: 13, fontWeight: 700,
+                          color: accent.text, margin: i === 0 ? '0 0 10px' : '20px 0 10px',
+                          whiteSpace: 'pre-line',
                         }}>
                           {q.section}
                         </p>

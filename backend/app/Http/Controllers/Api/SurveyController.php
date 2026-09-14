@@ -27,6 +27,7 @@ class SurveyController extends Controller
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'closing_note' => 'nullable|string',
             'opens_at' => 'nullable|date',
             'closes_at' => 'nullable|date|after_or_equal:opens_at',
         ]);
@@ -49,6 +50,7 @@ class SurveyController extends Controller
         $data = $request->validate([
             'title' => 'sometimes|required|string|max:255',
             'description' => 'nullable|string',
+            'closing_note' => 'nullable|string',
             'is_active' => 'sometimes|boolean',
             'opens_at' => 'nullable|date',
             'closes_at' => 'nullable|date|after_or_equal:opens_at',
