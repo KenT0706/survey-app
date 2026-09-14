@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::table('questions', function (Blueprint $table) {
             // Optional grouping label shown as a heading above the question,
             // e.g. "Part 1 — About You" or "Part 3 — Stability".
-            $table->string('section')->nullable()->after('type');
+            $table->text('section')->nullable()->after('type');
         });
     }
 
