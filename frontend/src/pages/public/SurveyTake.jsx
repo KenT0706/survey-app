@@ -174,14 +174,15 @@ export default function SurveyTake() {
             </p>
           )}
 
-        <button
-      type="submit"
-      className="btn btn-pop btn-block"
-      disabled={submitting}
-      style={{
-        padding: '13px',
-        backgroundColor: accent.solid,
-        borderColor: accent.solid,
+      <button
+  type="submit"
+  className="btn btn-pop btn-block"
+  disabled={submitting}
+  style={{
+    padding: '13px',
+    backgroundColor: accent.solid,
+    borderColor: accent.solid,
+    color: '#fff',
       }}
     >
       {submitting ? 'Submitting…' : 'Submit response'}
