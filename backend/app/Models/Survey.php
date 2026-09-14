@@ -12,7 +12,7 @@ class Survey extends Model
 
     protected $fillable = [
         'title', 'description', 'slug', 'qr_code_path',
-        'is_active', 'opens_at', 'closes_at', 'created_by',
+        'is_active', 'opens_at', 'closes_at', 'created_by', 'seed_hash',
     ];
 
     protected $casts = [

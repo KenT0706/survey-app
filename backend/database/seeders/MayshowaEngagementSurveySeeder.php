@@ -13,9 +13,15 @@ use Illuminate\Support\Facades\DB;
  * are ALWAYS synced on every run via updateOrCreate, so editing them here and
  * redeploying is enough — no need to touch the live database by hand.
  *
- * Questions are only rebuilt (delete + recreate, inside a transaction) when
- * the count doesn't match what's defined below, so day-to-day boots don't
- * needlessly recreate 36 rows every time.
+ * Questions are rebuilt (delete + recreate, inside a transaction) whenever the
+ * $questions array's content changes AT ALL — not just its count — detected
+ * via a hash stored on the survey. So rewording a question, tweaking one
+ * option, or adding/removing a question all correctly trigger a rebuild on
+ * the next deploy.
+ *
+ * ⚠️ Once real responses exist, a rebuild deletes them along with the
+ * questions (answers cascade off question_id). Fine during setup/testing —
+ * stop editing this file's $questions once the survey actually goes live.
  */
 class MayshowaEngagementSurveySeeder extends Seeder
 {
@@ -128,11 +134,16 @@ class MayshowaEngagementSurveySeeder extends Seeder
             ['title' => $title, 'description' => $description, 'is_active' => true]
         );
 
-        if ($survey->questions()->count() === count($questions)) {
-            return; // question set already matches — nothing further to rebuild
+        // Fingerprint the FULL question set (text, options, sections, order —
+        // not just the count) so editing a single word or option triggers a
+        // rebuild, the same way adding or removing a question does.
+        $hash = md5(json_encode($questions));
+
+        if ($survey->seed_hash === $hash) {
+            return; // content is identical to what's already seeded — nothing to do
         }
 
-        DB::transaction(function () use ($survey, $questions) {
+        DB::transaction(function () use ($survey, $questions, $hash) {
             $survey->questions()->delete(); // cascades to options too
 
             foreach ($questions as $i => $q) {
@@ -148,6 +159,8 @@ class MayshowaEngagementSurveySeeder extends Seeder
                     $question->options()->create(['option_text' => $optionText, 'order' => $j]);
                 }
             }
+
+            $survey->update(['seed_hash' => $hash]);
         });
     }
 }
