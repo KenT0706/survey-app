@@ -41,7 +41,7 @@ class MayshowaEngagementSurveySeeder extends Seeder
 
         // Edit the deadline / intro copy here — it will always take effect on
         // the next deploy, regardless of whether questions need rebuilding.
-        $title = 'Mayshowa Employee Engagement Survey 2026';
+        $title = "MAYSHOWA GROUP OF COMPANIES\nEMPLOYEE ENGAGEMENT SURVEY 2026";
         $description = '"Working Together" — We Want to Hear From You.'
             . "\n"
             . 'Your answers are reported in groupings, not individually. There are no right or wrong answers. '
