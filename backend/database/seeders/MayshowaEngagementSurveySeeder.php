@@ -145,6 +145,10 @@ class MayshowaEngagementSurveySeeder extends Seeder
         }
 
         DB::transaction(function () use ($survey, $questions, $hash) {
+            // Deleting questions cascade-deletes their answers, which would
+            // leave response rows with nothing attached — so clear those too,
+            // keeping response counts honest.
+            $survey->responses()->delete();
             $survey->questions()->delete(); // cascades to options too
 
             foreach ($questions as $i => $q) {

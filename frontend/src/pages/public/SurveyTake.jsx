@@ -84,6 +84,12 @@ export default function SurveyTake() {
     <div style={{ minHeight: '100vh', background: 'var(--paper)', paddingBottom: 60, '--accent': accent.solid }}>
       <div style={{ background: accent.solid, padding: '48px 20px 64px' }}>
         <div style={{ maxWidth: 640, margin: '0 auto', color: '#fff' }}>
+           <p style={{
+            margin: '0 0 10px', fontSize: 11.5, letterSpacing: 0.8,
+            textTransform: 'uppercase', opacity: 0.7, fontWeight: 600,
+          }}>
+            © 2026 HR Training Consultancy
+          </p>
           <h1 style={{ color: '#fff', marginBottom: 8, whiteSpace: 'pre-line' }}>{survey.title}</h1>
           {survey.description && <p style={{ opacity: 0.92, margin: 0, whiteSpace: 'pre-line' }}>{survey.description}</p>}
         </div>
