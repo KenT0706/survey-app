@@ -7,8 +7,12 @@ export default function SurveyResponses() {
   const { id } = useParams();
   const [survey, setSurvey] = useState(null);
   const [downloading, setDownloading] = useState(null);
+  const [confirmText, setConfirmText] = useState('');
+  const [clearing, setClearing] = useState(false);
+  const [cleared, setCleared] = useState(null);
 
-  useEffect(() => { api.get(`/surveys/${id}`).then((res) => setSurvey(res.data)); }, [id]);
+  const load = () => api.get(`/surveys/${id}`).then((res) => setSurvey(res.data));
+  useEffect(() => { load(); }, [id]);
 
   const downloadFile = async (path, filename, key) => {
     setDownloading(key);
@@ -25,10 +29,24 @@ export default function SurveyResponses() {
     }
   };
 
+  const clearResponses = async () => {
+    setClearing(true);
+    setCleared(null);
+    try {
+      const { data } = await api.delete(`/surveys/${id}/responses`, { data: { confirm: true } });
+      setCleared(data.message);
+      setConfirmText('');
+      load(); // refresh the response count shown on this page
+    } finally {
+      setClearing(false);
+    }
+  };
+
   if (!survey) return <div className="page"><p className="muted">Loading…</p></div>;
 
   const accent = accentFor(survey);
   const slug = survey.slug || survey.id;
+  const canClear = confirmText.trim().toUpperCase() === 'CLEAR';
 
   return (
     <>
@@ -42,7 +60,9 @@ export default function SurveyResponses() {
           Results
         </span>
         <h1>{survey.title}</h1>
-        <p className="muted" style={{ marginBottom: 28 }}>Export what you've collected so far.</p>
+        <p className="muted" style={{ marginBottom: 28 }}>
+          {survey.responses_count} response{survey.responses_count === 1 ? '' : 's'} collected so far.
+        </p>
 
         <div className="card card-pad" style={{ marginBottom: 14 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
@@ -92,9 +112,38 @@ export default function SurveyResponses() {
           </div>
         </div>
 
-        <p className="muted" style={{ fontSize: 13 }}>
+        <p className="muted" style={{ fontSize: 13, marginBottom: 28 }}>
           Open-ended answers appear in full on the Excel sheet. The image covers closed-ended questions only.
         </p>
+
+        <div className="card card-pad" style={{ borderColor: 'var(--danger)' }}>
+          <p style={{ margin: 0, fontWeight: 600, color: 'var(--danger)' }}>Danger zone</p>
+          <p className="muted" style={{ fontSize: 13.5, marginTop: 6, marginBottom: 14 }}>
+            Permanently deletes all {survey.responses_count} collected response{survey.responses_count === 1 ? '' : 's'} for
+            this survey so it can be reused for a fresh round. The survey, its questions, and its QR code/link are
+            untouched — only respondent data is removed. Export what you need first; this can't be undone.
+          </p>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <input
+              className="field" placeholder='Type "CLEAR" to confirm'
+              value={confirmText} onChange={(e) => setConfirmText(e.target.value)}
+              style={{ flex: 1 }}
+            />
+            <button
+              onClick={clearResponses}
+              disabled={!canClear || clearing || survey.responses_count === 0}
+              className="btn btn-sm"
+              style={{
+                background: canClear ? 'var(--danger)' : 'var(--line)',
+                color: canClear ? '#fff' : 'var(--ink-soft)',
+                flexShrink: 0,
+              }}
+            >
+              {clearing ? 'Clearing…' : 'Clear responses'}
+            </button>
+          </div>
+          {cleared && <p style={{ color: 'var(--danger)', fontSize: 13, marginTop: 10, marginBottom: 0 }}>{cleared}</p>}
+        </div>
       </div>
     </>
   );

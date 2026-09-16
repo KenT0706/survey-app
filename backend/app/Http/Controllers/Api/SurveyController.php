@@ -38,11 +38,10 @@ class SurveyController extends Controller
         return response()->json($survey->fresh(), 201);
     }
 
-    // GET /api/surveys/{survey} — full survey with questions + options, for the builder UI
-    public function show(Survey $survey)
-    {
-        return response()->json($survey->load('questions.options'));
-    }
+   public function show(Survey $survey)
+{
+    return response()->json($survey->load('questions.options')->loadCount('responses'));
+}
 
     // PUT /api/surveys/{survey}
     public function update(Request $request, Survey $survey)
@@ -95,5 +94,22 @@ class SurveyController extends Controller
         Storage::disk('public')->put($path, $result->getString());
 
         $survey->update(['qr_code_path' => $path]);
+    }
+        // DELETE /api/surveys/{survey}/responses — wipes all collected responses
+    // and answers for a fresh round, keeping the survey/questions/QR intact.
+    // Requires the request to explicitly confirm, since this is irreversible.
+    public function clearResponses(Request $request, Survey $survey)
+    {
+        $request->validate([
+            'confirm' => 'required|in:1,true',
+        ]);
+
+        $count = $survey->responses()->count();
+        $survey->responses()->delete(); // cascades to answers
+
+        return response()->json([
+            'message' => "Cleared {$count} response(s).",
+            'cleared' => $count,
+        ]);
     }
 }
