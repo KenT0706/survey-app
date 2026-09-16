@@ -5,11 +5,11 @@ FROM php:8.2-apache
 # - gd: required for the PNG results export (ExportController::image)
 # - zip: required by maatwebsite/excel
 RUN apt-get update && apt-get install -y \
-    libpq-dev libpng-dev libjpeg-dev libzip-dev unzip git \
-    && docker-php-ext-configure gd --with-jpeg \
+    libpq-dev libpng-dev libjpeg-dev libfreetype6-dev libzip-dev unzip git \
+    fonts-noto-cjk \
+    && docker-php-ext-configure gd --with-jpeg --with-freetype \
     && docker-php-ext-install pdo_pgsql pgsql gd zip \
     && a2enmod rewrite
-
 WORKDIR /var/www/html
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
