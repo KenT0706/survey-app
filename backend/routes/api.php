@@ -29,4 +29,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/surveys/{survey}/export/excel', [ExportController::class, 'excel']);
     Route::get('/surveys/{survey}/export/image', [ExportController::class, 'image']);
+    Route::delete('/surveys/{survey}/responses', [SurveyController::class, 'clearResponses']);
 });
