@@ -45,7 +45,7 @@ class MayshowaEngagementSurveySeeder extends Seeder
         $description = '"Working Together" — We Want to Hear From You.'
             . "\n"
             . 'Your answers are reported in groupings, not individually. There are no right or wrong answers. '
-            . 'It takes about 10 minutes. Please submit by 30 September 2026.';
+            . 'It takes about 10 minutes. Please submit by 5 October 2026.';
         $closingNote = 'Thank you for your honest feedback — Working Together, we improve together.';
 
         $questions = [
