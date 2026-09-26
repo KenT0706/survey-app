@@ -44,8 +44,8 @@ class MayshowaEngagementSurveySeeder extends Seeder
         $title = "MAYSHOWA GROUP\nEMPLOYEE ENGAGEMENT SURVEY 2026";
         $description = '"Working Together" — We Want to Hear From You.'
             . "\n"
-            . 'Your answers are reported in groupings, not individually. There are no right or wrong answers. '
-            . 'It takes about 10 minutes. Please submit by 5 October 2026.';
+            . 'No personal data is collected. For strategic improvement, your answers will be segmented into categories. '
+            . 'It takes about 10 minutes. Please submit by 5th October 2026.';
         $closingNote = 'Thank you for your honest feedback — Working Together, we improve together.';
 
         $questions = [
@@ -65,11 +65,11 @@ class MayshowaEngagementSurveySeeder extends Seeder
                 'type' => 'single_choice',
                 'question_text' => 'Which area do you work in? / Apakah bidang kerja anda? / 您在哪个部门工作？',
                 'options' => [
-                    'Deputy Director & above (any department) — tick this box only',
+                    'Deputy Director & above (any department)',
                     'Production/Warehouse/Logistic/Demand Planning',
-                    'Sales & Marketing/Business Development',
-                    'Finance/DX/Purchasing & Costing',
-                    'HR & Admin/Compliance/Corporate Communication',
+                    'Sales & Marketing',
+                    'Finance/Accounts',
+                    'Business Development/Corporate Commnication/Purchasing & Costing/HR & Admin/Compliance/& DX',
                 ],
             ],
             [

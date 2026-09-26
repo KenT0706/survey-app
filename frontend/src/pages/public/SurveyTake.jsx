@@ -47,6 +47,16 @@ export default function SurveyTake() {
 
   const accent = survey ? accentFor(survey) : accentFor(0);
 
+  const withBold = (text, phrase) => {
+    if (!text) return null;
+    return text.split(phrase).map((part, i, arr) => (
+      <span key={i}>
+        {part}
+        {i < arr.length - 1 && <strong>{phrase}</strong>}
+      </span>
+    ));
+  };
+
   if (error && !survey) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--paper)' }}>
@@ -84,14 +94,12 @@ export default function SurveyTake() {
     <div style={{ minHeight: '100vh', background: 'var(--paper)', paddingBottom: 60, '--accent': accent.solid }}>
       <div style={{ background: accent.solid, padding: '48px 20px 64px' }}>
         <div style={{ maxWidth: 640, margin: '0 auto', color: '#fff' }}>
-           <p style={{
-            margin: '0 0 10px', fontSize: 11.5, letterSpacing: 0.8,
-            textTransform: 'uppercase', opacity: 0.7, fontWeight: 600,
-          }}>
-            © 2026 HR Training Consultancy
-          </p>
           <h1 style={{ color: '#fff', marginBottom: 8, whiteSpace: 'pre-line' }}>{survey.title}</h1>
-          {survey.description && <p style={{ opacity: 0.92, margin: 0, whiteSpace: 'pre-line' }}>{survey.description}</p>}
+          {survey.description && (
+            <p style={{ opacity: 0.92, margin: 0, whiteSpace: 'pre-line' }}>
+              {withBold(survey.description, 'Working Together')}
+            </p>
+          )}
         </div>
       </div>
 
@@ -121,14 +129,14 @@ export default function SurveyTake() {
                     <input
                       required={q.is_required} type="text" className="field"
                       onChange={(e) => setText(q.id, e.target.value)}
-                      style={{ fontSize: 16.5 }}
+                      style={{ fontSize: 18 }}
                     />
                   )}
                   {q.type === 'textarea' && (
                     <textarea
                       required={q.is_required} rows={4} className="field"
                       onChange={(e) => setText(q.id, e.target.value)}
-                      style={{ fontFamily: 'Inter, sans-serif', resize: 'vertical', fontSize: 16.5 }}
+                      style={{ fontFamily: 'Inter, sans-serif', resize: 'vertical', fontSize: 18 }}
                     />
                   )}
                   {(q.type === 'single_choice' || q.type === 'rating') && (
@@ -139,7 +147,7 @@ export default function SurveyTake() {
                           style={{
                             display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px',
                             border: '1.5px solid var(--line)', borderRadius: 'var(--radius-md)', cursor: 'pointer',
-                            fontSize: 16.5,
+                            fontSize: 18,
                           }}
                         >
                           <input type="radio" name={`q-${q.id}`} required={q.is_required} onChange={() => toggleOption(q.id, o.id, false)} />
@@ -156,7 +164,7 @@ export default function SurveyTake() {
                           style={{
                             display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px',
                             border: '1.5px solid var(--line)', borderRadius: 'var(--radius-md)', cursor: 'pointer',
-                            fontSize: 16.5,
+                            fontSize: 18,
                           }}
                         >
                           <input type="checkbox" onChange={() => toggleOption(q.id, o.id, true)} />
