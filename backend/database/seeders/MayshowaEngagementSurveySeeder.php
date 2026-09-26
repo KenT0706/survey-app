@@ -69,7 +69,7 @@ class MayshowaEngagementSurveySeeder extends Seeder
                     'Production/Warehouse/Logistic/Demand Planning',
                     'Sales & Marketing',
                     'Finance/Accounts',
-                    'Business Development/Corporate Commnication/Purchasing & Costing/HR & Admin/Compliance/& DX',
+                    'Business Development/Corporate Commnication/Purchasing & Costing/HR & Admin/Compliance/DX',
                 ],
             ],
             [
