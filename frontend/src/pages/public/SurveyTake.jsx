@@ -112,7 +112,7 @@ export default function SurveyTake() {
               <div key={q.id}>
                {showSectionHeading && (
   <div style={{
-    marginTop: i === 0 ? 0 : 28, marginBottom: 12,
+    marginTop: i === 0 ? 40 : 28, marginBottom: 12,
     paddingBottom: 8, borderBottom: `2px solid ${accent.solid}`,
     background: 'var(--paper)',
   }}>
