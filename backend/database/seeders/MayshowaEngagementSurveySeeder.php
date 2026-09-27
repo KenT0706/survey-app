@@ -68,8 +68,8 @@ class MayshowaEngagementSurveySeeder extends Seeder
                     'Deputy Director & above (any department)',
                     'Production/Warehouse/Logistic/Demand Planning',
                     'Sales & Marketing',
-                    'Finance/Accounts',
-                    'Business Development/Corporate Commnication/Purchasing & Costing/HR & Admin/Compliance/DX',
+                    'Finance/Accounts/Credit Control',
+                    'Business Development/Corporate Commnication/Purchasing & Costing/HR & Admin/Compliance/DX/ECO',
                 ],
             ],
             [
