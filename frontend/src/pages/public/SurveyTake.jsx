@@ -47,15 +47,14 @@ export default function SurveyTake() {
 
   const accent = survey ? accentFor(survey) : accentFor(0);
 
-  const withBold = (text, phrase) => {
-    if (!text) return null;
-    return text.split(phrase).map((part, i, arr) => (
-      <span key={i}>
-        {part}
-        {i < arr.length - 1 && <strong>{phrase}</strong>}
-      </span>
-    ));
-  };
+ const withBold = (text, phrases) => {
+  if (!text) return null;
+  const escaped = phrases.map((p) => p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  const pattern = new RegExp(`(${escaped.join('|')})`, 'g');
+  return text.split(pattern).map((part, i) =>
+    phrases.includes(part) ? <strong key={i}>{part}</strong> : <span key={i}>{part}</span>
+  );
+};
 
   if (error && !survey) {
     return (
@@ -96,10 +95,10 @@ export default function SurveyTake() {
         <div style={{ maxWidth: 640, margin: '0 auto', color: '#fff' }}>
           <h1 style={{ color: '#fff', marginBottom: 8, whiteSpace: 'pre-line' }}>{survey.title}</h1>
           {survey.description && (
-            <p style={{ opacity: 0.92, margin: 0, whiteSpace: 'pre-line' }}>
-              {withBold(survey.description, 'Working Together')}
-            </p>
-          )}
+  <p style={{ opacity: 0.92, margin: 0, whiteSpace: 'pre-line' }}>
+    {withBold(survey.description, ['Working Together', 'We Want to Hear From You.'])}
+  </p>
+)}
         </div>
       </div>
 
@@ -111,11 +110,12 @@ export default function SurveyTake() {
 
             return (
               <div key={q.id}>
-                {showSectionHeading && (
-                  <div style={{
-                    marginTop: i === 0 ? 0 : 28, marginBottom: 12,
-                    paddingBottom: 8, borderBottom: `2px solid ${accent.solid}`,
-                  }}>
+               {showSectionHeading && (
+  <div style={{
+    marginTop: i === 0 ? 0 : 28, marginBottom: 12,
+    paddingBottom: 8, borderBottom: `2px solid ${accent.solid}`,
+    background: 'var(--paper)',
+  }}>
                     <h3 style={{ color: accent.text, margin: 0, whiteSpace: 'pre-line' }}>{q.section}</h3>
                   </div>
                 )}
