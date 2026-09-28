@@ -88,7 +88,7 @@ export default function SurveyResponses() {
           </div>
         </div>
 
-        <div className="card card-pad" style={{ marginBottom: 28 }}>
+        <div className="card card-pad" style={{ marginBottom: 14 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             <div style={{
               width: 42, height: 42, borderRadius: 10, background: accent.soft,
@@ -112,8 +112,28 @@ export default function SurveyResponses() {
           </div>
         </div>
 
+        <div className="card card-pad" style={{ marginBottom: 28 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            <div style={{
+              width: 42, height: 42, borderRadius: 10, background: accent.soft,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+            }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={accent.text} strokeWidth="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
+            </div>
+            <div style={{ flex: 1 }}>
+              <p style={{ margin: 0, fontWeight: 600 }}>Open-ended answers</p>
+              <p className="muted" style={{ margin: 0, fontSize: 13.5 }}>Every written response, readable on one page</p>
+            </div>
+            <Link to={`/admin/surveys/${id}/open-ended`} className="btn btn-primary btn-sm" style={{ textDecoration: 'none' }}>
+              View
+            </Link>
+          </div>
+        </div>
+
         <p className="muted" style={{ fontSize: 13, marginBottom: 28 }}>
-          Open-ended answers appear in full on the Excel sheet. The image covers closed-ended questions only.
+          Open-ended answers also appear in full on the Excel sheet, if you'd rather work with them there. The image covers closed-ended questions only.
         </p>
 
         <div className="card card-pad" style={{ borderColor: 'var(--danger)' }}>

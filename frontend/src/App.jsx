@@ -4,6 +4,7 @@ import Dashboard from './pages/admin/Dashboard.jsx';
 import SurveyBuilder from './pages/admin/SurveyBuilder.jsx';
 import SurveyResponses from './pages/admin/SurveyResponses.jsx';
 import SurveyTake from './pages/public/SurveyTake.jsx';
+import OpenEndedAnswers from './pages/admin/OpenEndedAnswers.jsx';
 
 function RequireAuth({ children }) {
   const token = localStorage.getItem('token');
@@ -22,6 +23,7 @@ export default function App() {
         <Route path="/admin" element={<RequireAuth><Dashboard /></RequireAuth>} />
         <Route path="/admin/surveys/:id" element={<RequireAuth><SurveyBuilder /></RequireAuth>} />
         <Route path="/admin/surveys/:id/responses" element={<RequireAuth><SurveyResponses /></RequireAuth>} />
+        <Route path="/admin/surveys/:id/open-ended" element={<RequireAuth><OpenEndedAnswers /></RequireAuth>} />
 
         <Route path="*" element={<Navigate to="/admin" replace />} />
       </Routes>

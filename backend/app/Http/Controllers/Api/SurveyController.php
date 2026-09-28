@@ -84,6 +84,32 @@ class SurveyController extends Controller
         ]);
     }
 
+    // GET /api/surveys/{survey}/open-ended-answers — every text/textarea
+// question's collected answers, grouped by question, for a clean read-only view.
+public function openEndedAnswers(Survey $survey)
+{
+    $questions = $survey->questions()
+        ->whereIn('type', ['text', 'textarea'])
+        ->orderBy('order')
+        ->with(['answers' => function ($query) {
+            $query->whereNotNull('answer_text')->where('answer_text', '!=', '')
+                ->with('response:id,submitted_at')
+                ->orderBy('created_at');
+        }])
+        ->get();
+
+    return response()->json(
+        $questions->map(fn ($q) => [
+            'id' => $q->id,
+            'question_text' => $q->question_text,
+            'answers' => $q->answers->map(fn ($a) => [
+                'text' => $a->answer_text,
+                'submitted_at' => $a->response?->submitted_at,
+            ])->values(),
+        ])
+    );
+}
+
     private function generateQrCode(Survey $survey): void
     {
         $qrCode = new QrCode($survey->publicUrl());
