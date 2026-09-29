@@ -7,11 +7,27 @@ export default function OpenEndedAnswers() {
   const { id } = useParams();
   const [survey, setSurvey] = useState(null);
   const [questions, setQuestions] = useState(null);
+    const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
     api.get(`/surveys/${id}`).then((res) => setSurvey(res.data));
     api.get(`/surveys/${id}/open-ended-answers`).then((res) => setQuestions(res.data));
   }, [id]);
+
+    const downloadPdf = async () => {
+    setDownloading(true);
+    try {
+      const res = await api.get(`/surveys/${id}/export/open-ended-pdf`, { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${survey.slug || survey.id}-open-ended-answers.pdf`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   if (!survey || !questions) return <div className="page"><p className="muted">Loading…</p></div>;
 
@@ -25,13 +41,20 @@ export default function OpenEndedAnswers() {
       </div>
 
       <div className="page">
-        <span className="pill" style={{ background: accent.soft, color: accent.text, marginBottom: 10 }}>
+                <span className="pill" style={{ background: accent.soft, color: accent.text, marginBottom: 10 }}>
           Open-ended answers
         </span>
-        <h1>{survey.title}</h1>
-        <p className="muted" style={{ marginBottom: 28, whiteSpace: 'pre-line' }}>
-          Every written response, grouped by question — nothing summarized or trimmed.
-        </p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16 }}>
+          <div>
+            <h1>{survey.title}</h1>
+            <p className="muted" style={{ marginBottom: 28, whiteSpace: 'pre-line' }}>
+              Every written response, grouped by question — nothing summarized or trimmed.
+            </p>
+          </div>
+          <button onClick={downloadPdf} className="btn btn-primary btn-sm" disabled={downloading} style={{ flexShrink: 0 }}>
+            {downloading ? 'Preparing…' : 'Download PDF'}
+          </button>
+        </div>
 
         {questions.length === 0 && (
           <div className="empty-state card"><p>This survey has no open-ended questions.</p></div>

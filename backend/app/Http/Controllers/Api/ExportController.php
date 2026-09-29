@@ -44,6 +44,36 @@ class ExportController extends Controller
         );
     }
 
+        // GET /api/surveys/{survey}/export/open-ended-pdf — every open-ended
+    // answer, grouped by question, as a clean downloadable PDF.
+    public function openEndedPdf(Survey $survey)
+    {
+        $questions = $survey->questions()
+            ->whereIn('type', ['text', 'textarea'])
+            ->orderBy('order')
+            ->with(['answers' => function ($query) {
+                $query->whereNotNull('answer_text')->where('answer_text', '!=', '')
+                    ->orderBy('created_at');
+            }])
+            ->get();
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('exports.open-ended', [
+            'survey' => $survey,
+            'questions' => $questions,
+        ]);
+
+        // Same Noto CJK font installed for the results image — needed so
+        // Chinese/Malay text renders instead of blank boxes.
+        $fontPath = '/usr/share/fonts/opentype/noto/NotoSansCJKsc-Regular.otf';
+        if (is_readable($fontPath)) {
+            $fontMetrics = $pdf->getDomPDF()->getFontMetrics();
+            $fontMetrics->registerFont(['family' => 'NotoSansCJK', 'style' => 'normal', 'weight' => 'normal'], $fontPath);
+            $pdf->getDomPDF()->getOptions()->setDefaultFont('NotoSansCJK');
+        }
+
+        return $pdf->download("{$survey->slug}-open-ended-answers.pdf");
+    }
+
     // GET /api/surveys/{survey}/export/image — a shareable PNG "results card" for closed-ended questions
     public function image(Survey $survey)
     {
